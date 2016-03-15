@@ -3,7 +3,13 @@ import HttpTransport from 'lokka-transport-http';
 
 // if the token expires within the next minute
 // it will be refreshed immediately.
-const MIN_TIMEOUT = 1000 * 60;
+const MIN_REFRESH_TIMEOUT = 1000 * 60;
+
+// if the token is not available, the job will
+// wait for this number of milliseconds
+const MAX_JOB_WAIT_TIME = 1000 * 10;
+const ERR_JOB_TIMEOUT = new Error('job timeout');
+
 
 export default class Transport {
   constructor(endpoint, arg2, arg3) {
@@ -46,19 +52,29 @@ export default class Transport {
     }
 
     return new Promise((resolve, reject) => {
-      this._waitlist.push({query, variables, opname, resolve, reject});
+      const job = {query, variables, opname, resolve, reject, done: false};
+      this._waitlist.push(job);
+
+      setTimeout(() => {
+        if (!job.done) {
+          job.done = true;
+          reject(ERR_JOB_TIMEOUT);
+        }
+      }, MAX_JOB_WAIT_TIME);
     });
   }
 
-  async _processWaitlist() {
+  _processWaitlist() {
     const jobs = this._waitlist;
     this._waitlist = [];
 
-    // TODO handle too many items??
-    await Promise.all(jobs.map(job => {
-      const {query, variables, opname, resolve, reject} = job;
-      await this.send(query, variables, opname).then(resolve, reject);
-    }));
+    jobs.forEach(job => {
+      const {query, variables, opname, resolve, reject, done} = job;
+      if (!done) {
+        job.done = true;
+        this.send(query, variables, opname).then(resolve, reject);
+      }
+    });
   }
 
   async _refreshToken() {
@@ -72,7 +88,7 @@ export default class Transport {
       options.headers.Authorization = `Bearer ${token}`;
 
       this._transport = new HttpTransport(this._endpoint, options);
-      await this._processWaitlist();
+      this._processWaitlist();
 
       // assuming the token has an expiration time
       // TODO handle tokens without expiration times
@@ -95,13 +111,13 @@ export default class Transport {
     const now = Date.now();
     const timeLeft = expires - now;
 
-    if (timeLeft <= MIN_TIMEOUT) {
+    if (timeLeft <= MIN_REFRESH_TIMEOUT) {
       this._refreshToken();
       return;
     }
 
     // add some slack time to avoid queuing
-    const timeout = timeLeft - MIN_TIMEOUT;
+    const timeout = timeLeft - MIN_REFRESH_TIMEOUT;
     setTimeout(() => this._refreshToken(), timeout);
   }
 }
