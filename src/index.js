@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import HttpTransport from 'lokka-transport-http';
 
-// if the token expires within the next minute
+// if the token expires within the next N ms
 // it will be refreshed immediately.
 const MIN_REFRESH_TIMEOUT = 1000 * 60;
 
@@ -38,8 +38,8 @@ export default class Transport {
     // This is done because we need to change headers with each refresh.
     this._transport = null;
 
-    // queue requests here when this.token is nulll
-    // after refreshing the token, process this queue.
+    // queue requests here when this.token is null.
+    // after refreshing the token, process the queue.
     this._waitlist = [];
 
     // refresh immediately
