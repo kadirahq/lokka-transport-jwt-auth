@@ -42,11 +42,19 @@ export default class Transport {
     // after refreshing the token, process the queue.
     this._waitlist = [];
 
+    // true if the transport is manually closed
+    // no further communication will be possible
+    this._closed = false;
+
     // refresh immediately
     this._scheduleRefresh(0);
   }
 
   send(query, variables, opname) {
+    if (this._closed) {
+      throw new Error('transport is closed');
+    }
+
     if (this._transport) {
       return this._transport.send(query, variables, opname);
     }
@@ -64,6 +72,11 @@ export default class Transport {
     });
   }
 
+  close() {
+    this._transport = null;
+    this._closed = true;
+  }
+
   _processWaitlist() {
     const jobs = this._waitlist;
     this._waitlist = [];
@@ -78,6 +91,10 @@ export default class Transport {
   }
 
   async _refreshToken() {
+    if (this._closed) {
+      return;
+    }
+
     try {
       const token = await this._refreshFn();
       if (!token) {
