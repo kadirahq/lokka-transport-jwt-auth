@@ -4,7 +4,8 @@
   "description": "HTTP transport for Lokka with JWT authentication",
   "main": "lib/",
   "scripts": {
-    "test": "nofat build && nofat test && nofat lint"
+    "prepublish": "nofat make",
+    "test": "nofat test && nofat lint"
   },
   "repository": {
     "type": "git",
@@ -19,13 +20,14 @@
     "url": "https://github.com/kadirahq/lokka-transport-jwt-auth/issues"
   },
   "homepage": "https://github.com/kadirahq/lokka-transport-jwt-auth#readme",
-  "devDependencies": {
-    "nofat": "^0.7.2"
-  },
   "dependencies": {
     "babel-polyfill": "^6.7.2",
     "jsonwebtoken": "^5.7.0",
+    "lokka": "^1.6.1",
     "lokka-transport-http": "^1.3.2",
     "source-map-support": "^0.4.0"
+  },
+  "devDependencies": {
+    "nofat": "^1.0.3"
   }
 }
