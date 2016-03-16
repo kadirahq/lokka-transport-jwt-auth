@@ -28,6 +28,10 @@ export default class Transport {
       this._refreshFn = arg2;
     }
 
+    if (!this._refreshFn) {
+      throw new Error('refresh function is required');
+    }
+
     // the "Authorization" header will be used to store the JWT token
     // make sure the user is not using it for anything else.
     if (this._options.headers && this._options.headers.Authorization) {
