@@ -1,5 +1,9 @@
 # ChangeLog
 
+### v1.3.2
+
+* Remove jwt-js which introduce weird error related to crypto module
+
 ### v1.3.1
 
 * Use jsonwebtoken as a proper dep
