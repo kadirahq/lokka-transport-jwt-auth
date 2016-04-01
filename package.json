@@ -1,6 +1,6 @@
 {
   "name": "lokka-transport-jwt-auth",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "HTTP transport for Lokka with JWT authentication",
   "main": "lib/",
   "scripts": {
