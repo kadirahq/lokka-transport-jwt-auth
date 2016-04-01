@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-
+const {describe, it, before, after} = global;
 import sinon from 'sinon';
 import {expect} from 'chai';
 import {wink} from './sleep';
@@ -110,6 +110,7 @@ describe('Transport', function () {
       expect(tr._waitlist.length).to.equal(1);
       tr.close();
     });
+
   });
 
   describe('close', function () {
