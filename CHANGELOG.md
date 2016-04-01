@@ -1,5 +1,9 @@
 # ChangeLog
 
+### v1.3.1
+
+* Use jsonwebtoken as a proper dep
+
 ### v1.3.0
 
 * Use jsonwebtoken again. We had some issues with the use of crypto in `jwt-js` with Meteor.
