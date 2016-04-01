@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import { decodeToken } from 'jwt-js';
 import HttpTransport from 'lokka-transport-http';
 
 // if the token expires within the next N ms
@@ -113,7 +113,7 @@ export default class Transport {
 
       // assuming the token has an expiration time
       // TODO handle tokens without expiration times
-      const payload = jwt.decode(token);
+      const payload = decodeToken(token).payload;
       if (!payload || !payload.exp) {
         throw new Error('invalid token');
       }
