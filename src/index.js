@@ -124,7 +124,7 @@ export default class Transport {
     } catch (e) {
       // console.log the error??
       this._transport = null;
-      this._scheduleRefresh(0);
+      this._scheduleRefresh(MAX_JOB_WAIT_TIME);
     }
   }
 
