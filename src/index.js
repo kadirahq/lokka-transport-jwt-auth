@@ -124,7 +124,7 @@ export default class Transport {
     } catch (e) {
       // console.log the error??
       this._transport = null;
-      this._scheduleRefresh(MAX_JOB_WAIT_TIME);
+      this._scheduleRefresh(Date.now() + MIN_REFRESH_TIMEOUT + MAX_JOB_WAIT_TIME);
     }
   }
 
